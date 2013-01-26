@@ -6,10 +6,10 @@
 		<meta name="keywords" content="python web application" />
 		<meta name="description" content="pyramid web application" />
 		<link rel="shortcut icon" href="${request.static_url('seedbank:static/favicon.ico')}" />
-		<link rel="Stylesheet" href="${h.url('/css/base.css')}" />
+		<!-- <link rel="Stylesheet" href="{h.url('/css/base.css')}" /> -->
 		${next.styleSheetIncludes()}
 
-		<--! js -->
+		<!-- js -->
 		${next.javascriptIncludes()}
 	</head>
 	<body>
