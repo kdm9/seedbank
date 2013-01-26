@@ -20,13 +20,16 @@ from sqlalchemy.orm import (
     )
 
 from zope.sqlalchemy import ZopeTransactionExtension
-from passlib.hash import pbkdf2_sha512 as pwhash
+from passlib.hash import bcrypt
 from datetime import datetime
 
 DBSession = scoped_session(sessionmaker(extension=ZopeTransactionExtension()))
 Base = declarative_base()
 Base.id = Column(Integer, primary_key=True)
 
+
+# Security Parameters (perhaps move to INI)
+HASH_ROUNDS = 13
 
 def setup_db(engine):
     Base.metadata.create_all(engine)
@@ -86,7 +89,7 @@ class User(Base):
     email = Column(Unicode(255, collation="utf8"), nullable=False)
     initials = Column(Unicode(3, collation="utf8"), nullable=False) 
     create_date = Column(DateTime, nullable=False)
-    hashed_password = Column(String(130), nullable=False)
+    hashed_password = Column(String(60), nullable=False)
 
     def check_password(self, raw_password):
         return pwhash.verify(raw_password, self.hashed_password)
@@ -102,7 +105,8 @@ class User(Base):
         self.family_name = family_name
         self.email = email
         self.create_datetime = datetime.now()
-        self.hashed_password = pwhash.encrypt(password)  #Store Hashed password
+        #Store Hashed password, it salts itself
+        self.hashed_password = bcrypt.encrypt(password, rounds=HASH_ROUNDS)
 
 
 class Trip(Base):
