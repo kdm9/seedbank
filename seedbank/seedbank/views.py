@@ -6,7 +6,7 @@ from pyramid.view import (
 
 from sqlalchemy.exc import DBAPIError
 
-from .models import (
+from seedbank.models import (
         DBSession,
         Collection,
         User,
@@ -15,20 +15,29 @@ from .models import (
         )
 
 
-@view_config(route_name='home', renderer='home.mak')
-def my_view(request):
-    try:
-        one = None
-    except DBAPIError:
-        return Response(conn_err_msg, content_type='text/plain', status_int=500)
-    return {'one': one, 'project': 'seedbank'}
-
-
-class CollectionView(object):
+class BaseView(object):
     __autoexpose__ = None
     def __init__(self, request):
         self.request = request
+
+
+class Root(BaseView):
+    """Views in the root path
+    """
     
+    @view_config(route_name='home', renderer='home.mak')
+    def home(request):
+        try:
+            one = None
+        except DBAPIError:
+            return Response(conn_err_msg, content_type='text/plain', status_int=500)
+        return {'one': one, 'project': 'seedbank'}
+
+
+class CollectionView(object):
+    """Views for the Collections model
+    """
+
     @view_config(route_name="collection_add", renderer="collection/add.mak")
     def add(self):
         return
