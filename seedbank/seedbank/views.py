@@ -1,35 +1,47 @@
 from pyramid.response import Response
-from pyramid.view import view_config
+from pyramid.view import (
+        view_config,
+        view_defaults,
+        )
 
 from sqlalchemy.exc import DBAPIError
 
 from .models import (
-    DBSession,
-    MyModel,
-    )
+        DBSession,
+        Collection,
+        User,
+        Species,
+        Trip,
+        )
 
 
-@view_config(route_name='home', renderer='templates/mytemplate.pt')
+@view_config(route_name='home', renderer='home.mak')
 def my_view(request):
     try:
-        one = DBSession.query(MyModel).filter(MyModel.name == 'one').first()
+        one = None
     except DBAPIError:
         return Response(conn_err_msg, content_type='text/plain', status_int=500)
     return {'one': one, 'project': 'seedbank'}
 
-conn_err_msg = """\
-Pyramid is having a problem using your SQL database.  The problem
-might be caused by one of the following things:
 
-1.  You may need to run the "initialize_seedbank_db" script
-    to initialize your database tables.  Check your virtual 
-    environment's "bin" directory for this script and try to run it.
+class CollectionView(object):
+    __autoexpose__ = None
+    def __init__(self, request):
+        self.request = request
+    
+    @view_config(route_name="collection_add", renderer="collection/add.mak")
+    def add(self):
+        return
 
-2.  Your database server may not be running.  Check that the
-    database server referred to by the "sqlalchemy.url" setting in
-    your "development.ini" file is running.
+    @view_config(route_name="collection_index",
+            renderer="collection/index.mak")
+    def index(self):
+        return {"collections": [
+                    {"voucher": "kdm123/13"},
+                    {"voucher": "kdm124/13"},
+                    ]
+                }
 
-After you fix the problem, please restart the Pyramid application to
-try it again.
-"""
-
+    @view_config(route_name="collection_view", renderer="collection/view.mak")
+    def view(self):
+        return {"voucher": "kdm123/13"}
