@@ -27,11 +27,7 @@ class Root(BaseView):
     
     @view_config(route_name='home', renderer='home.mak')
     def home(request):
-        try:
-            one = None
-        except DBAPIError:
-            return Response(conn_err_msg, content_type='text/plain', status_int=500)
-        return {'one': one, 'project': 'seedbank'}
+        return {}
 
 
 class CollectionView(object):
