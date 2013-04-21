@@ -17,13 +17,14 @@ def main(global_config, **settings):
     DBSession.configure(bind=engine)
     Base.metadata.bind = engine
     config = Configurator(settings=settings)
+    config.include('pyramid_jinja2')
 
     # Static route (to static files)
     config.add_static_view('static', 'static', cache_max_age=3600)
 
     # Root-level routes
     config.add_route('home', '/')
-    
+
     # Routes for models.Collection
     config.add_route('collection_index', "/collections/$")
     config.add_route('collection_add', "/collections/add/$")
