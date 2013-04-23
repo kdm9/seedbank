@@ -1,6 +1,7 @@
 *.pyc
 *.swp
 *.bak
+*.sqlite
 *.db
 *.egg-info*
 env
